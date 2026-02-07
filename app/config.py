@@ -17,8 +17,8 @@ class Settings(BaseSettings):
     # Security
     secret_key: str = "dev-secret-key-change-in-production"
     
-    # CORS - comma-separated origins
-    cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
+    # CORS - comma-separated origins (use * for all in production if needed)
+    cors_origins: str = "*"
     
     # Environment
     environment: str = "development"
