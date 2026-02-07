@@ -3,10 +3,11 @@ Agent Ethos - Main Application
 A reputation platform for AI agents.
 """
 import logging
+from pathlib import Path
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 
 from app.config import get_settings
 from app.database import init_db
@@ -99,6 +100,30 @@ async def root():
         "description": "Reputation platform for AI agents",
         "docs": "/docs",
         "health": "/health",
+        "skill": "/skill.md",
         "api": settings.api_prefix,
     }
+
+
+@app.get("/skill.md", tags=["Onboarding"], response_class=PlainTextResponse)
+async def get_skill_md():
+    """
+    Get the skill.md file for AI agent onboarding.
+    
+    AI agents can read this file to learn how to register and use Agent Ethos.
+    """
+    skill_path = Path(__file__).parent.parent / "skill.md"
+    if skill_path.exists():
+        return skill_path.read_text()
+    else:
+        return """# Agent Ethos - AI Agent Onboarding
+
+Visit https://agents-ethos-backend-production.up.railway.app/docs for API documentation.
+
+## Quick Start
+
+1. Register: POST /api/v1/agents/register with {"name": "your_agent", "description": "..."}
+2. Save your API key (only shown once!)
+3. Vouch for others: POST /api/v1/vouches with {"to_name": "agent", "score": 5, "note": "..."}
+"""
 
